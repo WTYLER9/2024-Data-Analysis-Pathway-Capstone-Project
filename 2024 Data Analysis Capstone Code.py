@@ -19,6 +19,7 @@ print(df_main.head(20))
 print(winners.head(15))
 print(len(winners))
 
+
 df_winners = pd.merge(left=winners,right=df,on='Index')
 df_winners = df_winners[['Day','Weekday','Race Number','Post Position','M/L Odds','Final Odds','Change In Odds',
                        'Distance','FieldSize','Favorite','HalfMileTime','FinalTime','WinnersTrainer',
@@ -26,6 +27,8 @@ df_winners = df_winners[['Day','Weekday','Race Number','Post Position','M/L Odds
 print(df_winners.head())
 df_winners['Final Odds'] = df_winners['Final Odds'].astype('Float64')
 print(df_winners.convert_dtypes().dtypes)
+winners_as_favs = df_winners[df_winners["Favorite"] == "Y"]
+print(len(winners_as_favs)/len(winners))
 
 df_winners.to_csv("merged_data_sets.csv")
 
@@ -57,9 +60,43 @@ df_main_no_scratches['Finish'] = df_main_no_scratches['Finish'].astype('Int64')
 df_main_no_scratches['Change In Odds'] = np.abs(df_main_no_scratches['Change In Odds'])
 print(df_main_no_scratches.convert_dtypes().dtypes)
 print(df_main_no_scratches.head(20))
+average_mlodds_by_finish = df_main_no_scratches.groupby("Finish")["M/L Odds"].mean().sort_values(ascending=True)
+print(average_mlodds_by_finish)
+average_finalodds_by_finish = df_main_no_scratches.groupby("Finish")["Final Odds"].mean().sort_values(ascending=True)
+print(average_finalodds_by_finish)
+average_change_in_odds_by_finish = df_main_no_scratches.groupby("Finish")["Change In Odds"].mean().sort_values(ascending=True)
+print(average_change_in_odds_by_finish)
+
+#transform data
+def splitter(s):
+    li = []
+    for i in s:
+        if i <= 2:
+            li.append(1) 
+        elif i <= 5:
+            li.append(2)
+        elif i <= 10:
+            li.append(3)
+        elif i <= 15:
+            li.append(4)
+        elif i <= 20:
+            li.append(5)
+        elif i <= 30:
+            li.append(6)
+        elif i <= 50:
+            li.append(7)
+        else:
+            li.append(8)
+    return li
+
+df_main_no_scratches = df_main_no_scratches.assign(ML_Odds_Split = lambda x: splitter(df_main_no_scratches["M/L Odds"]))
+df_main_no_scratches = df_main_no_scratches.assign(F_Odds_Split = lambda x: splitter(df_main_no_scratches["Final Odds"]))
+df_main_no_scratches = df_main_no_scratches.assign(Diff_Odds_Split = lambda x: splitter(df_main_no_scratches["Change In Odds"]))
+print(df_main_no_scratches.head(20))
 
 #M/L odds model
-X = np.array(df_main_no_scratches['M/L Odds']).reshape(-1, 1)
+#X = np.array(df_main_no_scratches['M/L Odds']).reshape(-1, 1)
+X = np.array(df_main_no_scratches['ML_Odds_Split']).reshape(-1, 1)
 y = np.array(df_main_no_scratches['Finish']).reshape(-1, 1)
 ml_model = LinearRegression().fit(X,y)
 print ('Intercept: ',ml_model.intercept_)    
@@ -78,7 +115,8 @@ print(mean_absolute_error(y, y_pred))
 print(ml_model.score(X, y))
 
 #Final Odds model
-X = np.array(df_main_no_scratches['Final Odds']).reshape(-1, 1)
+#X = np.array(df_main_no_scratches['Final Odds']).reshape(-1, 1)
+X = np.array(df_main_no_scratches['F_Odds_Split']).reshape(-1, 1)
 f_model = LinearRegression().fit(X,y)
 print ('Intercept: ',f_model.intercept_)    
 print ('Coefficients: ', f_model.coef_[0])
@@ -96,7 +134,8 @@ print(mean_absolute_error(y, y_pred))
 print(f_model.score(X, y))
 
 #change in odds model
-X = np.array(df_main_no_scratches['Change In Odds']).reshape(-1, 1)
+#X = np.array(df_main_no_scratches['Change In Odds']).reshape(-1, 1)
+X = np.array(df_main_no_scratches['Diff_Odds_Split']).reshape(-1, 1)
 cio_model = LinearRegression().fit(X,y)
 print ('Intercept: ',cio_model.intercept_)    
 print ('Coefficients: ', cio_model.coef_[0])
@@ -114,3 +153,10 @@ print(mean_absolute_error(y, y_pred))
 print(cio_model.score(X, y))
 
 #compare models
+
+average_smlodds_by_finish = df_main_no_scratches.groupby("Finish")["ML_Odds_Split"].mean().sort_values(ascending=True)
+print(average_smlodds_by_finish)
+average_sfinalodds_by_finish = df_main_no_scratches.groupby("Finish")["F_Odds_Split"].mean().sort_values(ascending=True)
+print(average_sfinalodds_by_finish)
+average_schange_in_odds_by_finish = df_main_no_scratches.groupby("Finish")["Diff_Odds_Split"].mean().sort_values(ascending=True)
+print(average_schange_in_odds_by_finish)
