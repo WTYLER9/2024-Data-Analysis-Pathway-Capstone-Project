@@ -94,6 +94,7 @@ df_main_no_scratches = df_main_no_scratches.assign(ML_Odds_Split = lambda x: spl
 df_main_no_scratches = df_main_no_scratches.assign(F_Odds_Split = lambda x: splitter(df_main_no_scratches["Final Odds"]))
 df_main_no_scratches = df_main_no_scratches.assign(Diff_Odds_Split = lambda x: splitter(df_main_no_scratches["Change In Odds"]))
 print(df_main_no_scratches.head(20))
+df_main_no_scratches.to_csv('main_no_scratches_grouped')
 
 #M/L odds model
 #X = np.array(df_main_no_scratches['M/L Odds']).reshape(-1, 1)
