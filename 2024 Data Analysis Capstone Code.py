@@ -66,6 +66,7 @@ average_finalodds_by_finish = df_main_no_scratches.groupby("Finish")["Final Odds
 print(average_finalodds_by_finish)
 average_change_in_odds_by_finish = df_main_no_scratches.groupby("Finish")["Change In Odds"].mean().sort_values(ascending=True)
 print(average_change_in_odds_by_finish)
+df_main_no_scratches.to_csv('main_no_scratches')
 
 #transform data
 def splitter(s):
