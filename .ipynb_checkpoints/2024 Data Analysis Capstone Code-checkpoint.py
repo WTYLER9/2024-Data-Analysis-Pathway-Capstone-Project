@@ -14,8 +14,7 @@ print(len(df))
 df_main = pd.read_csv("Keeneland April 2024 Data for Capstone Project.csv")
 print(df_main.isnull().values.any())
 winners = df_main[df_main["Finish"] == "1"]
-winners = winners.copy()
-winners.loc[:, 'Index'] = np.arange(len(winners))
+winners['Index'] = np.arange(len(winners))
 print(df_main.head(20))
 print(winners.head(15))
 print(len(winners))
@@ -56,10 +55,9 @@ average_winner_oddschange = average_winner_finalodds - average_winner_mlodds
 print(average_winner_oddschange)
 
 df_main_no_scratches = df_main[df_main["Finish"] != "S"]
-df_main_no_scratches = df_main_no_scratches.copy()
-df_main_no_scratches.loc[:,'Final Odds'] = df_main_no_scratches['Final Odds'].astype('Float64')
-df_main_no_scratches.loc[:,'Finish'] = df_main_no_scratches['Finish'].astype('Int64')
-df_main_no_scratches.loc[:,'Change In Odds'] = np.abs(df_main_no_scratches['Change In Odds'])
+df_main_no_scratches['Final Odds'] = df_main_no_scratches['Final Odds'].astype('Float64')
+df_main_no_scratches['Finish'] = df_main_no_scratches['Finish'].astype('Int64')
+df_main_no_scratches['Change In Odds'] = np.abs(df_main_no_scratches['Change In Odds'])
 print(df_main_no_scratches.convert_dtypes().dtypes)
 print(df_main_no_scratches.head(20))
 average_mlodds_by_finish = df_main_no_scratches.groupby("Finish")["M/L Odds"].mean().sort_values(ascending=True)
@@ -157,6 +155,7 @@ print(mean_absolute_error(y, y_pred))
 print(cio_model.score(X, y))
 
 #compare models
+
 average_smlodds_by_finish = df_main_no_scratches.groupby("Finish")["ML_Odds_Split"].mean().sort_values(ascending=True)
 print(average_smlodds_by_finish)
 average_sfinalodds_by_finish = df_main_no_scratches.groupby("Finish")["F_Odds_Split"].mean().sort_values(ascending=True)
