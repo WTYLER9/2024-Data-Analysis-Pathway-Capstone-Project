@@ -50,7 +50,7 @@ merged_data_sets.csv - "written" by code after merging main data file and second
 
 requirements.txt - used for virtual environment setup
 
-### Virutal Environment Instructions
+### Virtual Environment Instructions
 
 1. After you have cloned the repo to your machine, navigate to the project 
 folder in GitBash/Terminal.
