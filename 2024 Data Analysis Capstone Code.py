@@ -16,8 +16,8 @@ print(df_main.isnull().values.any())
 winners = df_main[df_main["Finish"] == "1"]
 winners = winners.copy()
 winners.loc[:, 'Index'] = np.arange(len(winners))
-print(df_main.head(20))
-print(winners.head(15))
+print(df_main.head())
+print(winners.head())
 print(len(winners))
 
 
@@ -39,8 +39,6 @@ winning_jockey = df_winners['WinnersJockey'].value_counts()
 print(winning_jockey)
 winning_trainer = df_winners['WinnersTrainer'].value_counts()
 print(winning_trainer)
-number_of_scratches = len(df_main[df_main["Finish"]=='S'])
-print(number_of_scratches)
 
 average_field_size_by_weekday = df_winners.groupby("Weekday")["FieldSize"].mean()
 print(average_field_size_by_weekday)
@@ -55,20 +53,25 @@ print(average_winner_finalodds)
 average_winner_oddschange = average_winner_finalodds - average_winner_mlodds
 print(average_winner_oddschange)
 
+number_of_scratches = len(df_main[df_main["Finish"]=='S'])
+print(number_of_scratches)
 df_main_no_scratches = df_main[df_main["Finish"] != "S"]
 df_main_no_scratches = df_main_no_scratches.copy()
 df_main_no_scratches.loc[:,'Final Odds'] = df_main_no_scratches['Final Odds'].astype('Float64')
 df_main_no_scratches.loc[:,'Finish'] = df_main_no_scratches['Finish'].astype('Int64')
 df_main_no_scratches.loc[:,'Change In Odds'] = np.abs(df_main_no_scratches['Change In Odds'])
 print(df_main_no_scratches.convert_dtypes().dtypes)
-print(df_main_no_scratches.head(20))
+print(df_main_no_scratches.head())
+
+df_main_no_scratches.to_csv('main_no_scratches.csv')
+
 average_mlodds_by_finish = df_main_no_scratches.groupby("Finish")["M/L Odds"].mean().sort_values(ascending=True)
 print(average_mlodds_by_finish)
 average_finalodds_by_finish = df_main_no_scratches.groupby("Finish")["Final Odds"].mean().sort_values(ascending=True)
 print(average_finalodds_by_finish)
 average_change_in_odds_by_finish = df_main_no_scratches.groupby("Finish")["Change In Odds"].mean().sort_values(ascending=True)
 print(average_change_in_odds_by_finish)
-df_main_no_scratches.to_csv('main_no_scratches.csv')
+
 
 #transform data
 def splitter(s):
@@ -95,12 +98,13 @@ def splitter(s):
 df_main_no_scratches = df_main_no_scratches.assign(ML_Odds_Split = lambda x: splitter(df_main_no_scratches["M/L Odds"]))
 df_main_no_scratches = df_main_no_scratches.assign(F_Odds_Split = lambda x: splitter(df_main_no_scratches["Final Odds"]))
 df_main_no_scratches = df_main_no_scratches.assign(Diff_Odds_Split = lambda x: splitter(df_main_no_scratches["Change In Odds"]))
-print(df_main_no_scratches.head(20))
+print(df_main_no_scratches.head())
+
 df_main_no_scratches.to_csv('main_no_scratches_grouped.csv')
 
 #M/L odds model
-#X = np.array(df_main_no_scratches['M/L Odds']).reshape(-1, 1)
-X = np.array(df_main_no_scratches['ML_Odds_Split']).reshape(-1, 1)
+X = np.array(df_main_no_scratches['M/L Odds']).reshape(-1, 1)
+#X = np.array(df_main_no_scratches['ML_Odds_Split']).reshape(-1, 1)
 y = np.array(df_main_no_scratches['Finish']).reshape(-1, 1)
 ml_model = LinearRegression().fit(X,y)
 print ('Intercept: ',ml_model.intercept_)    
@@ -119,8 +123,8 @@ print(mean_absolute_error(y, y_pred))
 print(ml_model.score(X, y))
 
 #Final Odds model
-#X = np.array(df_main_no_scratches['Final Odds']).reshape(-1, 1)
-X = np.array(df_main_no_scratches['F_Odds_Split']).reshape(-1, 1)
+X = np.array(df_main_no_scratches['Final Odds']).reshape(-1, 1)
+#X = np.array(df_main_no_scratches['F_Odds_Split']).reshape(-1, 1)
 f_model = LinearRegression().fit(X,y)
 print ('Intercept: ',f_model.intercept_)    
 print ('Coefficients: ', f_model.coef_[0])
@@ -138,8 +142,8 @@ print(mean_absolute_error(y, y_pred))
 print(f_model.score(X, y))
 
 #change in odds model
-#X = np.array(df_main_no_scratches['Change In Odds']).reshape(-1, 1)
-X = np.array(df_main_no_scratches['Diff_Odds_Split']).reshape(-1, 1)
+X = np.array(df_main_no_scratches['Change In Odds']).reshape(-1, 1)
+#X = np.array(df_main_no_scratches['Diff_Odds_Split']).reshape(-1, 1)
 cio_model = LinearRegression().fit(X,y)
 print ('Intercept: ',cio_model.intercept_)    
 print ('Coefficients: ', cio_model.coef_[0])
