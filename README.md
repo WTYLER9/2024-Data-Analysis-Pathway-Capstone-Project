@@ -1,6 +1,14 @@
 # 2024-Data-Analysis-Pathway-Capstone-Project:
 # Analyzing Keeneland's 2024 Spring Meet race data to (hopefully) improve future betting performance
 
+### About This Project:
+
+This project will use data gathered from Keeneland's 2024 Spring Meet and through its analysis try to identify
+trends that can help the average bettor improve their chances of cashing a ticket. Some of the things looked at are
+winning jockeys, winning trainers, field sizes, winning times for certain distances, and what days have better payouts.
+An added emphasis is made on analyzing each horses' Morning Line odds, final odds, and change in odds as a predictor
+for determing where a horse will finish in its race.
+
 ### Features Checklist:
 
 1. Loading data - Read in 2 CSV files
@@ -19,7 +27,8 @@ myvenv folder - automatically created by VS Code after initiating virtual enviro
 
 2024 Data Analysis Capstone Code.py - "rough draft" of code using VS Code because I find it easier to work in
 
-Code.ipynb - **Final Draft** of code with comments using Jupyter Notebook to make it look nicer than the .py file
+Code.ipynb - **Final Draft** of code with comments using Jupyter Notebook to make it look nicer than the .py file,
+            best viewed in Jupyter Notebook
 
 Keeneland 2024 Spring Meet Visualizations.twb - Tableau Public workbook, **finished dashboard** at the following link:
     https://public.tableau.com/app/profile/william.tyler/viz/Keeneland2024SpringMeetVisualizations/Story1?publish=yes
@@ -55,6 +64,3 @@ folder in GitBash/Terminal.
 
 If you don't want to use the command line and you have VS Code, you can use the info found here:
 https://code.visualstudio.com/docs/python/environments
-
-### End of File
-
